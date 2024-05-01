@@ -1,0 +1,28 @@
+---
+- hosts: raspi
+  gather_facts: no
+
+  tasks:
+  - name: synchronize this template repo with raspi
+    become: true
+    synchronize:
+      src: "{{ host.main_dir }}"
+      dest: "{{ template.dir }}"
+      delete: true
+      recursive: true
+      rsync_opts:
+        - "--exclude=dist"
+
+  - name: link inv/local.yml to the root folder
+    become: true
+    file:
+      src: "{{ template.dir }}/inv/local.yml"
+      dest: "/root/local.yml"
+      state: link
+      
+  - name: link run.sh to the root folder
+    become: true
+    file:
+      src: "{{ template.dir }}/run.sh"
+      dest: "/root/run.sh"
+      state: link
